@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pastel Memory Journal</title>
+    <style>
+        :root {
+            --pastel-pink: #ffd6e7;
+            --pastel-mint: #d6fff5;
+            --pastel-lavender: #e6d6ff;
+            --pastel-peach: #ffdfd6;
+            --pastel-blue: #d6e9ff;
+            --text-dark: #5a5a5a;
+            --text-light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--pastel-mint);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            color: var(--text-dark);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(to right, var(--pastel-pink), var(--pastel-lavender));
+            border-radius: 3px;
+        }
+
+        .subtitle {
+            color: var(--text-dark);
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .alarm-section {
+            background-color: var(--pastel-lavender);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .alarm-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .alarm-title i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--pastel-pink);
+        }
+
+        .alarm-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .time-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="time"] {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background-color: white;
+            font-size: 1rem;
+            color: var(--text-dark);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--pastel-pink);
+            color: var(--text-dark);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .alarm-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: none;
+        }
+
+        .active {
+            background-color: var(--pastel-mint);
+            display: block;
+        }
+
+        .chat-section {
+            background-color: var(--pastel-blue);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chat-title i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--pastel-pink);
+        }
+
+        .message-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            resize: none;
+            height: 100px;
+            font-size: 1rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .memories-section {
+            background-color: var(--pastel-peach);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .memories-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .memories-title i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            color: var(--pastel-pink);
+        }
+
+        .memories-container {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .memory {
+            background-color: white;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .memory-date {
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+
+        .memory-content {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+
+        .decoration {
+            position: absolute;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bow {
+            width: 60px;
+            height: 60px;
+            background-color: var(--pastel-pink);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            opacity: 0.7;
+        }
+
+        .leaf {
+            width: 40px;
+            height: 40px;
+            background-color: var(--pastel-mint);
+            border-radius: 50% 0;
+            opacity: 0.7;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--pastel-pink);
+            color: var(--text-dark);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .alarm-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative elements -->
+    <div class="decoration bow" style="top: 5%; left: 5%;"></div>
+    <div class="decoration leaf" style="top: 10%; right: 8%; transform: rotate(45deg);"></div>
+    <div class="decoration bow" style="bottom: 10%; left: 8%; transform: rotate(30deg);"></div>
+    <div class="decoration leaf" style="bottom: 5%; right: 5%; transform: rotate(-20deg);"></div>
+
+    <div class="container">
+        <header>
+            <h1>Pastel Memory Journal</h1>
+            <p class="subtitle">A beautiful way to remember the good things in life</p>
+        </header>
+
+        <section class="alarm-section">
+            <div class="alarm-title">
+                <i>⏰</i>
+                <h2>Daily Reminder</h2>
+            </div>
+            <p>Set a time to be asked "What good happened to you today?"</p>
+            <div class="alarm-controls">
+                <div class="time-input">
+                    <label for="alarm-time">Set Time:</label>
+                    <input type="time" id="alarm-time" value="20:00">
+                </div>
+                <button id="set-alarm">Set Reminder</button>
+                <button id="clear-alarm">Clear Reminder</button>
+            </div>
+            <div id="alarm-status" class="alarm-status">
+                <!-- Alarm status will appear here -->
+            </div>
+        </section>
+
+        <section class="chat-section">
+            <div class="chat-title">
+                <i>💭</i>
+                <h2>Today's Good Memory</h2>
+            </div>
+            <p>What good happened to you today?</p>
+            <div class="message-input">
+                <textarea id="message-input" placeholder="Write about something positive that happened today..."></textarea>
+                <button id="save-message">Save Memory</button>
+            </div>
+        </section>
+
+        <section class="memories-section">
+            <div class="memories-title">
+                <i>📖</i>
+                <h2>Your Memory Collection</h2>
+            </div>
+            <div class="memories-container" id="memories-container">
+                <!-- Memories will appear here -->
+            </div>
+        </section>
+    </div>
+
+    <div class="notification" id="notification">
+        What good happened to you today?
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const alarmTimeInput = document.getElementById('alarm-time');
+            const setAlarmButton = document.getElementById('set-alarm');
+            const clearAlarmButton = document.getElementById('clear-alarm');
+            const alarmStatus = document.getElementById('alarm-status');
+            const messageInput = document.getElementById('message-input');
+            const saveMessageButton = document.getElementById('save-message');
+            const memoriesContainer = document.getElementById('memories-container');
+            const notification = document.getElementById('notification');
+
+            // Variables
+            let alarmInterval = null;
+            let alarmTime = null;
+
+            // Load saved memories from localStorage
+            loadMemories();
+
+            // Set alarm button event
+            setAlarmButton.addEventListener('click', function() {
+                const time = alarmTimeInput.value;
+                if (!time) {
+                    alert('Please select a time for your reminder.');
+                    return;
+                }
+
+                // Clear any existing alarm
+                if (alarmInterval) {
+                    clearInterval(alarmInterval);
+                }
+
+                // Set the alarm
+                alarmTime = time;
+                setAlarm(time);
+                
+                // Update status
+                alarmStatus.textContent = `Daily reminder set for ${formatTime(time)}`;
+                alarmStatus.classList.add('active');
+                
+                // Save to localStorage
+                localStorage.setItem('memoryJournalAlarm', time);
+            });
+
+            // Clear alarm button event
+            clearAlarmButton.addEventListener('click', function() {
+                if (alarmInterval) {
+                    clearInterval(alarmInterval);
+                    alarmInterval = null;
+                }
+                
+                alarmTime = null;
+                alarmStatus.textContent = 'No reminder set';
+                alarmStatus.classList.remove('active');
+                
+                // Remove from localStorage
+                localStorage.removeItem('memoryJournalAlarm');
+            });
+
+            // Save message button event
+            saveMessageButton.addEventListener('click', function() {
+                const message = messageInput.value.trim();
+                if (!message) {
+                    alert('Please write something before saving.');
+                    return;
+                }
+
+                saveMemory(message);
+                messageInput.value = '';
+            });
+
+            // Load any existing alarm from localStorage
+            const savedAlarm = localStorage.getItem('memoryJournalAlarm');
+            if (savedAlarm) {
+                alarmTimeInput.value = savedAlarm;
+                setAlarm(savedAlarm);
+                alarmStatus.textContent = `Daily reminder set for ${formatTime(savedAlarm)}`;
+                alarmStatus.classList.add('active');
+            }
+
+            // Function to set the alarm
+            function setAlarm(time) {
+                alarmInterval = setInterval(function() {
+                    const now = new Date();
+                    const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+                    
+                    if (currentTime === time) {
+                        showNotification();
+                    }
+                }, 1000); // Check every second
+            }
+
+            // Function to show notification
+            function showNotification() {
+                notification.classList.add('show');
+                
+                // Auto-hide after 10 seconds
+                setTimeout(function() {
+                    notification.classList.remove('show');
+                }, 10000);
+            }
+
+            // Function to format time for display
+            function formatTime(time) {
+                const [hours, minutes] = time.split(':');
+                const hour = parseInt(hours);
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const displayHour = hour % 12 || 12;
+                return `${displayHour}:${minutes} ${ampm}`;
+            }
+
+            // Function to save a memory
+            function saveMemory(message) {
+                const now = new Date();
+                const memory = {
+                    date: now.toISOString(),
+                    content: message
+                };
+                
+                // Get existing memories
+                let memories = JSON.parse(localStorage.getItem('memoryJournalMemories')) || [];
+                
+                // Add new memory
+                memories.unshift(memory);
+                
+                // Save back to localStorage
+                localStorage.setItem('memoryJournalMemories', JSON.stringify(memories));
+                
+                // Reload memories display
+                loadMemories();
+            }
+
+            // Function to load memories
+            function loadMemories() {
+                const memories = JSON.parse(localStorage.getItem('memoryJournalMemories')) || [];
+                memoriesContainer.innerHTML = '';
+                
+                if (memories.length === 0) {
+                    memoriesContainer.innerHTML = '<p>No memories yet. Start by writing about something good that happened today!</p>';
+                    return;
+                }
+                
+                memories.forEach(memory => {
+                    const memoryElement = document.createElement('div');
+                    memoryElement.className = 'memory';
+                    
+                    const date = new Date(memory.date);
+                    const formattedDate = date.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    memoryElement.innerHTML = `
+                        <div class="memory-date">${formattedDate}</div>
+                        <div class="memory-content">${memory.content}</div>
+                    `;
+                    
+                    memoriesContainer.appendChild(memoryElement);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
